@@ -30,23 +30,17 @@ app.get('/task',(req,res) => {
         }
         console.log('úspech s pripojením do monga ;)')
 
-        let filter = {};
+        var filter = {};
         if(req.query.done){
             if(req.query.done=='true'){
-                filter = {done:true}
+                filter.done=true
             }else{
                 filter = {done:false}
             }
         }
-
+      
         if(req.query.priority){
-            if(req.query.priority!=isNaN){
-                cislo = (req.query.priority)
-                console.log(cislo)
-                filter = {priority:cislo}
-            }else{
-                return console.log('NEDA sa ')
-            }
+            filter.priority=parseInt(req.query.priority);
         }
 
         const db = client.db(databaseName);
