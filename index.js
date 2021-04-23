@@ -5,8 +5,35 @@ const mongodb = require('mongodb')
 const connectionURL = 'mongodb://localhost:27017'
 const databaseName = 'tskmngr'
 
+//vytvorenie servera
 const app = express()
 const MongoClient = mongodb.MongoClient
+
+app.use(
+    express.urlencoded({
+      extended: true
+    })
+  )
+
+app.use(express.json())
+
+app.post('/task/new',(req,res)=>{
+    const data = req.body;
+    const name = data.name;
+    const priority = data.priority;
+    let price;
+    if(data.price){
+        price = data.price;
+    }
+    console.log(name, ' ', priority, ' ', price);
+
+    const done = false;
+    const currentdate = new Date();
+
+    
+
+})
+
 
 app.get('',(req,res) => {
     res.send('Hello, I am your NODEJS serverik!')
