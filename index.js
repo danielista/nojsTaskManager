@@ -30,8 +30,70 @@ app.post('/task/new',(req,res)=>{
     const done = false;
     const currentdate = new Date();
 
+    const object = {name, priority, currentdate, done};
+    if(price!=='undefined'){
+        object.price = price;
+    }
+
+    console.log(object);
+
+
+    MongoClient.connect(connectionURL,(error,client)=>{
+        if(error){
+            return console.log('NEDA sa pripojiť do databazy kámo!')
+        }
+        console.log('úspech s pripojením do monga ;)')
+        const db = client.db(databaseName);
+        db.collection('tasks').insertOne(object, (err,result)=>{
+           if(error){
+               console.log('nemožne uložiť data do databasi')
+               res.status(400).send({"erorr": "ojojojoj"})
+           }
+        }) ;
+
+    })
+})
+
+
+app.put('/task/done',(req,res) => {
     
 
+        var primaryKeyInput = {};
+        const id = req.query._id;
+        
+        if(!id){
+            res.status(400).send({"error":"missing _id parameter"})
+        }
+      
+        const filter = {}
+        filter._id = new mongodb.ObjectID(id)
+
+        const change = {}
+        change.done = true
+
+        MongoClient.connect(connectionURL,(error,client)=>{
+            if(error){
+                return console.log('NEDA sa pripojiť do databazy kámo!')
+            }
+            console.log('úspech s pripojením do monga ;)')
+        const db = client.db(databaseName);
+        
+        db.collection("tasks").updateOne(filter, {$set: {done: false }}, function(err, res) {
+            if (err) {
+                res.status(400).send({"error":"neda sa pridať úlohu ;)"})
+            }
+            res.status(200).send({"result":"úloha bola splnená ;) :D"})
+            console.log("1 document updated");
+            
+          });
+    })
+    /*
+    TO - DO:
+    nacitat id tasku
+    prpraviť update commandn - json
+    vykonat update
+    return 200 alebo 400 ;) :D u know when
+    */
 })
 
 
@@ -50,6 +112,8 @@ app.get('/about',(req,res) => {
 
 })
 
+
+// podla nazvu sprav si dano ešte ;)
 app.get('/task',(req,res) => {
     MongoClient.connect(connectionURL,(error,client)=>{
         if(error){
